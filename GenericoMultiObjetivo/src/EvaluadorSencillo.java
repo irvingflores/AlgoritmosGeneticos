@@ -9,5 +9,4 @@ public class EvaluadorSencillo implements Evaluador {
         }
         return vectorDeFunciones;
     }
-    
 }
