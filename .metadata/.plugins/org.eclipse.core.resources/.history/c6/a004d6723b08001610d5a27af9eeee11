@@ -1,0 +1,63 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class SeleccionadorGoldberg implements Seleccionador {
+
+	@Override
+	public List<Individuo> selecciona(List<Individuo> poblacion, Map<Individuo, Double[]> informacion) {
+		List<Individuo> actuales = poblacion;
+		List<Individuo> finales = new ArrayList<Individuo>();
+		List<Integer> puntos = new ArrayList<Integer>();
+		int nivel = 1;
+		while (!actuales.isEmpty()) {
+			Particion parti = particiona(actuales, informacion);
+			for (int i = 0; i < parti.noDominados.size(); i++)
+				puntos.add(0);
+			finales.addAll(parti.noDominados);
+		}
+		return null;
+	}
+	
+	public Particion particiona(List<Individuo> poblacion, Map<Individuo, Double[]> informacion) {
+		List<Individuo> dominados = new ArrayList<Individuo>();
+		List<Individuo> noDominados = new ArrayList<Individuo>();
+		int[] dominadosMarca = new int[poblacion.size()];
+		for (int i = 0; i < poblacion.size(); i++) {
+			for (int j = 0; j< poblacion.size(); j++) {
+				if (domina(informacion.get(poblacion.get(i)), informacion.get(poblacion.get(j)))) {
+					dominados.add(poblacion.get(j));
+					dominadosMarca[j] = 1;
+				}
+			}
+		}
+		for (int i = 0; i< poblacion.size(); i++) {
+			if (dominadosMarca[i] == 0)
+				noDominados.add(poblacion.get(i));
+		}
+		return new Particion(noDominados, dominados);
+	}
+	
+	public boolean domina(Double[] eval1, Double[] eval2) {
+		boolean menorIgual = true;
+		int menorEstricto = 0;
+		int tamano = eval1.length;
+		for (int i = 0; i < tamano; i++) {
+			if (eval1[i] <= eval2[i])
+				menorIgual &= true;
+			if (eval1[i] < eval2[2])
+				menorEstricto++;
+		}
+		return menorIgual && menorEstricto > 0;
+	}
+	
+	public static class Particion {
+		public List<Individuo> noDominados;
+		public List<Individuo> dominados;
+		public Particion(List<Individuo> noDominados, List<Individuo> dominados) {
+			super();
+			this.noDominados = noDominados;
+			this.dominados = dominados;
+		}
+	}
+}

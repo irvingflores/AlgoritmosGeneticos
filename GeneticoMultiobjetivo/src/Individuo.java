@@ -1,0 +1,65 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class Individuo {
+    
+    int[] genotipo;
+    double rangoMenor;
+    double rangoMayor;
+    int precision;
+    int numeroVariables;
+    int tamanoGenotipo;
+
+    public Individuo(double rangoMenor, double rangoMayor, int precision, int numeroVariables) {
+        this.rangoMenor = rangoMenor;
+        this.rangoMayor = rangoMayor;
+        this.precision = precision;
+        this.numeroVariables = numeroVariables;
+        tamanoGenotipo = getTamanoGenotipo();
+        genotipo = new int[numeroVariables*tamanoGenotipo];
+        Random random = new Random();
+        for (int i = 0; i < numeroVariables*tamanoGenotipo; i++) {
+            genotipo[i] = moneda(random);
+        }
+    }
+    
+    private int moneda(Random rand) {
+        
+        boolean booleano = rand.nextBoolean();
+        if (booleano) return 1;
+        else return 0;
+    }
+    
+    private int convierteANumero(int[] arreglo) {
+        int potencia = 1;
+        int total = 0;
+        for(int i=arreglo.length-1;i>=0;i--){
+            total += potencia*arreglo[i];
+            potencia*=2;
+        }
+        return total;
+    }
+    
+    List<Double> decodifica() {
+        double x=0;
+        List<Double> variables = new ArrayList<Double>(numeroVariables);
+        for (int i = 0; i<numeroVariables; i++) {
+            int[] variable = HerramientasArreglos.cortaArreglo(genotipo, i*tamanoGenotipo, (i+1)*tamanoGenotipo-1);
+            x=rangoMenor+(convierteANumero(variable)*((rangoMayor-rangoMenor)/(Math.pow(2,tamanoGenotipo)-1)));
+            variables.add(x);
+        }
+        return variables;
+    }
+    
+    private int getTamanoGenotipo()
+    {
+        int longitud_total=0;
+        double longitud=0;
+        longitud=rangoMayor-rangoMenor;
+        double nuevaPrecision=(int)Math.pow(10,precision);
+        longitud=longitud*nuevaPrecision;
+        longitud_total=(int)(Math.log(longitud)/Math.log(2));
+        return (longitud_total+1);
+    }
+}

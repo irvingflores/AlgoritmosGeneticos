@@ -1,0 +1,11 @@
+import java.util.List;
+
+public class Kurzawe1 implements Funcion {
+
+	@Override
+	public Double evalua(List<Double> parametros) {
+		
+		return null;
+	}
+
+}
