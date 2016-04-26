@@ -1,8 +1,9 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class Individuo {
+public class Individuo implements Cloneable {
     
     int[] genotipo;
     double rangoMenor;
@@ -52,6 +53,18 @@ public class Individuo {
         return variables;
     }
     
+	public void imprimeIndividuo() {
+		this.decodifica().stream().forEach(s -> System.out.print(s+ " "));
+	}
+	
+    public Object clone(){  
+        try{  
+            return super.clone();  
+        }catch(Exception e){ 
+            return null; 
+        }
+    }
+    
     private int getTamanoGenotipo()
     {
         int longitud_total=0;
@@ -62,4 +75,51 @@ public class Individuo {
         longitud_total=(int)(Math.log(longitud)/Math.log(2));
         return (longitud_total+1);
     }
+
+	@Override
+	public String toString() {
+		return "Individuo [genotipo=" + Arrays.toString(genotipo) + ", rangoMenor=" + rangoMenor + ", rangoMayor="
+				+ rangoMayor + ", precision=" + precision + ", numeroVariables=" + numeroVariables + ", tamanoGenotipo="
+				+ tamanoGenotipo + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(genotipo);
+		result = prime * result + numeroVariables;
+		result = prime * result + precision;
+		long temp;
+		temp = Double.doubleToLongBits(rangoMayor);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(rangoMenor);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + tamanoGenotipo;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Individuo other = (Individuo) obj;
+		if (!Arrays.equals(genotipo, other.genotipo))
+			return false;
+		if (numeroVariables != other.numeroVariables)
+			return false;
+		if (precision != other.precision)
+			return false;
+		if (Double.doubleToLongBits(rangoMayor) != Double.doubleToLongBits(other.rangoMayor))
+			return false;
+		if (Double.doubleToLongBits(rangoMenor) != Double.doubleToLongBits(other.rangoMenor))
+			return false;
+		if (tamanoGenotipo != other.tamanoGenotipo)
+			return false;
+		return true;
+	}
 }
