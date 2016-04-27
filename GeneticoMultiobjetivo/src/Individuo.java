@@ -57,12 +57,14 @@ public class Individuo implements Cloneable {
 		this.decodifica().stream().forEach(s -> System.out.print(s+ " "));
 	}
 	
-    public Object clone(){  
-        try{  
-            return super.clone();  
-        }catch(Exception e){ 
-            return null; 
+    public Individuo clone(){
+    	int[] genotipo2 = new int[genotipo.length];
+        for (int i = 0; i<genotipo.length; i++) {
+        	genotipo2[i] = genotipo[i];
         }
+        Individuo nuevo = new Individuo(this.rangoMenor, this.rangoMayor, this.precision, this.numeroVariables);
+        nuevo.genotipo = genotipo2;
+        return nuevo;
     }
     
     private int getTamanoGenotipo()

@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +58,7 @@ public class GenericoMulti {
     }
     
     public static List<Individuo> copiaPoblacion(List<Individuo> pob) {
-    	List<Individuo> nueva = pob.parallelStream().map(ind -> (Individuo)ind.clone())
-    			.collect(Collectors.toList());
+    	List<Individuo> nueva = pob.parallelStream().map(s -> (Individuo)s.clone()).collect(Collectors.toList());
     	return nueva;
     }
     
@@ -84,17 +84,18 @@ public class GenericoMulti {
     public List<Individuo> aplica() {
     	List<Individuo> poblacion = modelo.getPoblacion();
     	List<Individuo> copia;
-    	for (generacion = 0; generacion < 15; generacion++) {
+    	for (generacion = 0; generacion < 1000; generacion++) {
     		copia = copiaPoblacion(poblacion);
     		cruzaPoblacion(copia);
     		mutaPoblacion(copia);
-    		Map<Individuo, Double[]> evaluacion = evaluaPoblacion(copia);
-    		evaluacion.putAll(evaluaPoblacion(poblacion));
-    		poblacion = seleccionador.selecciona(copia, poblacion, evaluacion);
-    	}
-		Set<Individuo> repetidos = new HashSet<Individuo>();
-		poblacion.stream().forEach(s -> repetidos.add(s));
-		System.out.println(repetidos.size());
+    		Map<Individuo, Double[]> evaluacionCopia = evaluaPoblacion(copia);
+    		Map<Individuo, Double[]> evaluacionOriginal = evaluaPoblacion(poblacion);
+    		evaluacionCopia.putAll(evaluacionOriginal);
+    		poblacion = seleccionador.selecciona(copia, poblacion, evaluacionCopia);
+    		Set<Individuo> repetidos = new HashSet<Individuo>();
+    		poblacion.stream().forEach(s -> repetidos.add(s));
+    		System.out.println(generacion + "-->" + repetidos.size());
+    	}		
     	poblacion.stream().forEach(s -> {
     		for (int i = 0; i < s.numeroVariables*s.tamanoGenotipo; i++) {
     			System.out.print(s.genotipo[i]);
@@ -109,7 +110,7 @@ public class GenericoMulti {
     	List<Individuo> mejores = seleccionador.losMejores(poblacionFinal, evaluacion);
     	Path path = Paths.get("sources/resultados.txt");
     	try (BufferedWriter writer = Files.newBufferedWriter(path)) {
-    		mejores.stream().forEach(s -> {
+    		poblacionFinal.stream().forEach(s -> {
     	    	Double[] func = evaluador.evaluaIndividuo(modelo, s);
     	    	StringBuffer linea = new StringBuffer();
     	    	for (int i = 0; i < func.length; i++) {
