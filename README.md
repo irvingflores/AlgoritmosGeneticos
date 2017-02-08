@@ -1,2 +1,2 @@
 # AlgoritmosGeneticos
-Este repositorio va a guardar los algoritmos que Janeth hizo.
+Este repositorio contiene algunos desarrollos de algoritmos genéticos aun no terminados.
